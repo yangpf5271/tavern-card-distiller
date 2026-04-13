@@ -1,6 +1,18 @@
 # Illustration PNGs (too large for git, use download script)
-assets/illustrations/*.png
+# But allow the 10 sample illustrations
 rp-*/assets/illustrations/*.png
+!rp-八等分的群友/assets/illustrations/神宫寺教室3cwenp.png
+!rp-八等分的群友/assets/illustrations/神宫寺走廊jmkihe.png
+!rp-八等分的群友/assets/illustrations/高坂樱月邂逅qb31bo.png
+!rp-八等分的群友/assets/illustrations/高坂樱月走廊邂逅9h0chh.png
+!rp-八等分的群友/assets/illustrations/爱丽丝大街偶遇ebepz9.png
+!rp-八等分的群友/assets/illustrations/爱丽丝微笑u9o7i3.png
+!rp-八等分的群友/assets/illustrations/后藤冬训练fmh67u.png
+!rp-八等分的群友/assets/illustrations/后藤冬放学偶遇2encyj.png
+!rp-八等分的群友/assets/illustrations/美铃帅气kx2lzu.png
+!rp-八等分的群友/assets/illustrations/豆咪巨大猫娘微笑114gy4.png
+
+# Embedded images
 rp-*/assets/embedded_images/*.png
 
 # User data
