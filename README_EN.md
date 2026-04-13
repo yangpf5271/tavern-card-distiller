@@ -48,7 +48,7 @@ Quality character cards come with presets — sophisticated prompt engineering t
 
 ### Claude Code Live Demo
 
-https://github.com/user-attachments/assets/claude-code-demo.mp4
+https://github.com/leigegehaha/tavern-card-distiller/raw/main/screenshots/claude-code-demo.mp4
 
 <details>
 <summary>📸 More Screenshots</summary>
