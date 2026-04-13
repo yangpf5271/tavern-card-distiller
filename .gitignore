@@ -1,0 +1,16 @@
+# Illustration PNGs (too large for git, use download script)
+assets/illustrations/*.png
+rp-*/assets/illustrations/*.png
+rp-*/assets/embedded_images/*.png
+
+# User data
+user_profile.json
+chat_history/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store
