@@ -87,6 +87,10 @@ https://github.com/leigegehaha/tavern-card-distiller/raw/main/screenshots/claude
 
 > 完整 161 张插图可通过 `download_illustrations.sh` 脚本从 catbox.moe 批量下载。
 
+### 角色 Skill 中的插图目录
+
+![插图目录预览](screenshots/illustrations-preview.png)
+
 ---
 
 ## ✅ 兼容性
@@ -117,14 +121,44 @@ https://github.com/leigegehaha/tavern-card-distiller/raw/main/screenshots/claude
 
 ## 🚀 使用方法
 
-1. 克隆仓库到 skill 目录：
-   ```bash
-   git clone https://github.com/leigegehaha/tavern-card-distiller.git ~/.claude/skills/tavern-card-distiller
-   ```
+### 第一步：安装蒸馏器
 
-2. 在 Agent 中使用触发词：`角色卡`、`蒸馏角色`、`tavern card` 等
+克隆仓库到 AI Agent 的 skill 目录（以 Claude Code 为例）：
 
-3. 提供角色卡文件路径，自动蒸馏为可用的 RP skill
+```bash
+git clone https://github.com/leigegehaha/tavern-card-distiller.git ~/.claude/skills/tavern-card-distiller
+```
+
+### 第二步：蒸馏角色卡
+
+在 Agent 中使用触发词 `角色卡`、`蒸馏角色`、`tavern card` 等，并提供角色卡文件路径：
+
+```
+> 帮我蒸馏这张角色卡：~/Downloads/my-character.png
+```
+
+蒸馏器会自动提取角色定义、世界书、预设、插图等内容，生成一个完整的 RP skill 目录（如 `rp-角色名/`）。
+
+### 第三步：直接开始聊天
+
+蒸馏完成后，生成的 skill 会自动注册到你的 AI Agent 中。之后只需在 Agent 里说出角色名或触发词，就能直接开始沉浸式角色扮演：
+
+```
+> 凌夜          ← 直接说角色名即可启动
+> 八等分的群友   ← 触发对应角色的 skill
+```
+
+AI Agent 会自动加载角色设定、世界观、好感度系统等，进入完全沉浸的角色扮演模式。你可以：
+- 🎭 与角色自由对话，推进剧情
+- 💕 体验好感度/状态追踪系统
+- 🖼️ 在关键剧情节点自动展示场景插图
+- 💡 每次回复后获得 4 个剧情发展建议
+
+> 💡 **总结**：蒸馏一次，永久可用。蒸馏好的 skill 就像给 AI Agent 装了一个角色扮演模组，随时可以启动。
+
+### 已蒸馏角色可直接使用
+
+本仓库已包含 **11 个**蒸馏好的角色卡 skill，克隆后无需蒸馏，直接在 Agent 中说出角色名即可开始游玩。
 
 ---
 

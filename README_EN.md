@@ -87,6 +87,10 @@ Character cards can include scene illustrations. After distillation, a download 
 
 > Full 161 illustrations available via `download_illustrations.sh` batch download from catbox.moe.
 
+### Illustrations Directory in Character Skill
+
+![Illustrations Directory Preview](screenshots/illustrations-preview.png)
+
 ---
 
 ## ✅ Compatibility
@@ -117,14 +121,44 @@ Character cards can include scene illustrations. After distillation, a download 
 
 ## 🚀 Quick Start
 
-1. Clone to your skill directory:
-   ```bash
-   git clone https://github.com/leigegehaha/tavern-card-distiller.git ~/.claude/skills/tavern-card-distiller
-   ```
+### Step 1: Install the Distiller
 
-2. Use trigger words in your Agent: `角色卡`, `蒸馏角色`, `tavern card`, etc.
+Clone the repo to your AI Agent's skill directory (Claude Code example):
 
-3. Provide a character card file path — it auto-distills into a usable RP skill.
+```bash
+git clone https://github.com/leigegehaha/tavern-card-distiller.git ~/.claude/skills/tavern-card-distiller
+```
+
+### Step 2: Distill a Character Card
+
+Use trigger words like `tavern card`, `角色卡`, `distill character` in your Agent, and provide the card file path:
+
+```
+> Distill this character card: ~/Downloads/my-character.png
+```
+
+The distiller automatically extracts character definitions, world books, presets, illustrations, and generates a complete RP skill directory (e.g., `rp-character-name/`).
+
+### Step 3: Start Chatting
+
+Once distilled, the skill is automatically registered in your AI Agent. Just say the character's name or trigger word to start immersive roleplay:
+
+```
+> 凌夜              ← Just say the character name to launch
+> 八等分的群友       ← Triggers the corresponding character skill
+```
+
+The AI Agent automatically loads character settings, world lore, affection systems, and enters fully immersive roleplay mode. You can:
+- 🎭 Freely converse with characters and advance the story
+- 💕 Experience affection/status tracking systems
+- 🖼️ View scene illustrations at key story moments
+- 💡 Get 4 plot direction suggestions after each response
+
+> 💡 **TL;DR**: Distill once, use forever. A distilled skill is like installing an RP mod for your AI Agent — launch it anytime.
+
+### Pre-distilled Characters Ready to Play
+
+This repo includes **11** pre-distilled character card skills. After cloning, just say the character name in your Agent to start playing — no distillation needed.
 
 ---
 
