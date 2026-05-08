@@ -84,7 +84,7 @@ python3 ~/.claude/skills/tavern-card-distiller/scripts/quick_validate.py ~/.clau
 7. **角色设定** — 从卡片数据提取的核心设定
 8. **状态系统** — 好感度/情绪/其他变量（如有）
 9. **写作风格指导** — 叙事风格、格式要求
-10. **插图系统** — 内置插图 + AI 生成插图
+10. **插图系统** — 内置插图 + AI 生成插图（含首次使用下载流程、多平台发送逻辑，详见「插图系统章节模板」）
 11. **剧情建议系统** — 4 选项格式
 12. **参考资料** — 链接到 references/ 下的文件
 13. **默认开场白** — 完整的 first_mes 内容
@@ -167,13 +167,89 @@ summary: "当前剧情摘要"
 
 注意：禁止使用分隔线字符（`─────`）和圆圈数字（`①②③④`），统一使用 Markdown 数字列表。
 
+### 插图系统章节模板
+
+生成的每个角色 skill 的 SKILL.md 中，「插图系统」章节（第10章）必须包含以下完整内容：
+
+```markdown
+## 插图系统
+
+本角色卡共包含 N 张场景插图（定义于 `assets/illustrations_map.json`）。
+
+### 首次使用：插图下载流程
+
+1. 启动时检查 `assets/illustrations/` 目录，统计已有插图文件数量
+2. 如果插图不全（少于 illustrations_map.json 中的数量）：
+   - 询问用户：**「该角色共有 N 张场景插图，当前本地只有 M 张。是否下载全部插图？」**
+   - **用户同意** → 运行 `bash assets/download_illustrations.sh` 下载所有插图（下载完成后提示用户）
+   - **用户拒绝** → 后续有插图场景时通过 AI 生成替代，不再询问
+3. 如果插图已全部下载 → 跳过此流程
+
+### 插图触发时机
+
+- 重要剧情转折点
+- 新角色首次登场
+- 亲密/关键场景
+- 用户明确要求插图
+- 角色外貌/服装变化
+
+### 场景匹配规则
+
+根据当前剧情场景，在 `assets/illustrations_map.json` 中按角色名 + 场景关键词匹配合适的插图。
+
+### 发送插图——平台适配逻辑
+
+**判断当前运行平台：**
+- 检查当前消息来源的 gateway 类型
+- 微信网关 → 发送到聊天窗口
+- 飞书/钉钉等聊天网关 → 发送到聊天窗口
+- 桌面端 CLI → 直接用 open/show 命令打开本地文件
+- 无法判断时 → 使用 MEDIA: 方式发送
+
+**各平台发送方式：**
+
+| 平台 | 发送方式 | 说明 |
+|------|---------|------|
+| 微信 (WeChat) | `MEDIA:/absolute/path/to/image.jpg` | 必须压缩后发送（PNG→768x1024 JPEG q=85） |
+| 飞书 (Feishu) | `MEDIA:/absolute/path/to/image.jpg` | 同上，部分平台支持直接发送 |
+| 其他聊天网关 | `MEDIA:/absolute/path/to/image.jpg` | 同上 |
+| CLI / 桌面端 | `open /path/to/image.png` 或 `xdg-open /path/to/image.png` | 直接调用系统打开，无需压缩 |
+
+**具体执行步骤：**
+
+1. 从 illustrations_map.json 匹配场景，获取文件名
+2. 检查 `assets/illustrations/{文件名}` 是否存在
+3. 如果不存在 → 跳过（或 AI 生成替代）
+4. 如果存在：
+   - **聊天网关（微信/飞书等）：**
+     a. 用 PIL 压缩：`resize(768, 1024) → JPEG quality=85`（保存为 `{文件名}_compressed.jpg`）
+     b. 用 `MEDIA:` 发送到聊天窗口
+     c. 已压缩过的文件直接复用，不用重复压缩
+   - **桌面端 CLI：**
+     a. 直接发送 PNG 原图路径
+     b. 用 `open` / `xdg-open` 命令打开本地文件
+```
+
+### 插图覆盖范围
+
+列出所有角色的插图数量统计，如：
+- 角色A：X 张
+- 角色B：Y 张
+
+### 无匹配插图时的备选方案
+
+如果当前场景没有匹配的本地插图，可调用 AI 生图技能生成插图（根据角色外貌设定构建 prompt）。
+
+若用户拒绝下载插图，且 AI 生图不可用，则跳过插图。
+```
+
 ## 输出配置系统
 
 生成的 skill 目录下包含 `config.json`，控制输出行为：
 
 ```json
 {
-  "max_words": 1000,
+  "max_words": 2000,
   "writing_style": "轻小说",
   "writing_style_options": {
     "轻小说": "细腻的日式轻小说风格，注重氛围描写、角色心理刻画和感官细节",
@@ -306,10 +382,59 @@ generate_skill.py 自动生成 `references/preset.md`，包含：
    - regex_rules.md — 格式规范
    - preset.md — 预设与破限指令原文（自动生成或手动整理）
 8. 处理酒馆模板语法（参照上方对照表）
-9. 创建 user_profile.json（空模板）、config.json（默认配置）和 chat_history/ 目录
-10. 确保所有格式使用纯 Markdown（禁止 ASCII 框线字符和分隔线）
-11. 运行 quick_validate.py 验证
-12. 安装到所有平台
+9. 创建插图系统：
+
+   **9a. 生成插图映射表**
+   - 从角色卡中提取所有场景插图的文件列表
+   - 生成 `assets/illustrations_map.json`，格式：
+     ```json
+     {
+       "base_path": "assets/illustrations",
+       "illustrations": {
+         "角色名1": [
+           {"scene": "场景描述", "file": "文件名hash.png"}
+         ]
+       }
+     }
+     ```
+   
+   **9b. 生成下载脚本 `assets/download_illustrations.sh`**
+   - 脚本从 catbox.moe 等图床下载插图
+   - 每个文件对应一个 curl 下载命令
+   - 自动跳过已存在的文件，支持断点续传
+   - 示例格式：
+     ```bash
+     DEST="$(cd "$(dirname "$0")/illustrations" && pwd)"
+     mkdir -p "$DEST"
+     download() { ... }
+     download "场景1abc123.png" "abc123"
+     download "场景2def456.png" "def456"
+     ```
+
+   **9c. 编写「插图系统」章节（SKILL.md 第10章）**
+   生成的 SKILL.md 中「插图系统」章节必须包含以下内容：
+
+   ```markdown
+   ## 插图系统
+
+   本角色卡共包含 N 张场景插图（定义于 `assets/illustrations_map.json`）。
+
+   ### 首次使用：插图下载流程
+
+   1. 检查 `assets/illustrations/` 目录，统计已有插图数量
+   2. 如果插图不全（少于 illustrations_map.json 中的数量）：
+      - 询问用户：`「该角色共有 N 张场景插图，当前本地只有 M 张。是否下载全部插图？（约 XX MB）」`
+      - 用户同意 → 运行 `assets/download_illustrations.sh` 下载所有插图
+      - 用户拒绝 → 后续通过 AI 生成插图替代
+   3. 如果插图已全部下载 → 跳过，直接使用
+
+   ### 插图触发时机（同下）
+   ```
+
+10. 创建 user_profile.json（空模板）、config.json（默认配置）和 chat_history/ 目录
+11. 确保所有格式使用纯 Markdown（禁止 ASCII 框线字符和分隔线）
+12. 运行 quick_validate.py 验证
+13. 安装到所有平台
 
 ### 跨 agent 兼容性
 
